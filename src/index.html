@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Voice Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="collection-info">
+            <div class="collection-header">
+                <select id="chainSelect" class="chain-select">
+                    <option value="">Select Chain</option>
+                </select>
+                <input type="text" id="contractInput" class="contract-input" placeholder="Enter NFT Contract Address">
+                <button id="loadCollection" class="load-btn">Load Collection</button>
+            </div>
+            <div id="collectionMetadata" class="collection-metadata">
+                <div class="collection-banner">
+                    <img id="collectionBanner" src="" alt="Collection Banner" style="display: none;">
+                </div>
+                <div class="collection-details">
+                    <img id="collectionLogo" src="" alt="Collection Logo" style="display: none;">
+                    <h1 id="collectionName"></h1>
+                    <p id="collectionDescription"></p>
+                    <div class="collection-stats">
+                        <div class="stat">
+                            <span class="label">Floor Price</span>
+                            <span id="floorPrice" class="value"></span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">Total Items</span>
+                            <span id="totalItems" class="value"></span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">Owners</span>
+                            <span id="ownerCount" class="value"></span>
+                        </div>
+                    </div>
+                    <div class="collection-links">
+                        <a id="twitterLink" target="_blank" style="display: none;">
+                            <img src="twitter-icon.png" alt="Twitter">
+                        </a>
+                        <a id="discordLink" target="_blank" style="display: none;">
+                            <img src="discord-icon.png" alt="Discord">
+                        </a>
+                        <a id="websiteLink" target="_blank" style="display: none;">
+                            <img src="website-icon.png" alt="Website">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nft-selector">
+            <select id="nftSelect">
+                <option value="">Select an NFT</option>
+            </select>
+        </div>
+
+        <div class="nft-container">
+            <img id="nftImage" src="" alt="NFT Image">
+            <div id="nftTraits" class="nft-traits"></div>
+        </div>
+
+        <div class="chat-container">
+            <div class="language-toggle">
+                <button id="toggleLanguage">🌐 EN</button>
+            </div>
+            <div class="chat-box" id="chatBox"></div>
+            <div class="input-container">
+                <button id="recordButton" class="record-button">
+                    <span class="record-icon">🎤</span>
+                    <span class="status-text">Click to speak</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html> 
