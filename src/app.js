@@ -29,8 +29,14 @@ class NFTVoiceChat {
         this.discordLink = document.getElementById('discordLink');
         this.websiteLink = document.getElementById('websiteLink');
         
+        this.recognition = null;
+        this.synthesis = window.speechSynthesis;
+        
         this.setupEventListeners();
         this.loadChains();
+        
+        // Automatically load the Petra Boys collection
+        this.loadCollection();
     }
 
     async loadChains() {
@@ -51,26 +57,26 @@ class NFTVoiceChat {
     }
 
     async loadCollection() {
-        if (!this.selectedChain || !this.selectedContract) {
-            alert('Please select a chain and enter a contract address');
-            return;
-        }
-
         try {
-            const response = await fetch(`/api/collection?chain=${this.selectedChain}&contract=${this.selectedContract}`);
+            const chain = this.chainSelect.value;
+            const contract = this.contractInput.value;
+            
+            const response = await fetch(`/api/collection?chain=${chain}&contract=${contract}`);
+            if (!response.ok) throw new Error('Failed to load collection');
+            
             const data = await response.json();
+            this.updateCollectionUI(data);
             
-            // Update collection metadata
-            this.updateCollectionMetadata(data);
-            
-            // Update NFT selector
-            this.updateNFTSelector(data.nfts);
-            
-            // Preload NFT images
-            this.preloadNFTImages(data.nfts);
+            // Populate NFT select with the first 12 NFTs
+            this.nftSelect.innerHTML = '<option value="">Select an NFT</option>';
+            data.nfts.forEach(nft => {
+                const option = document.createElement('option');
+                option.value = nft.token_id;
+                option.textContent = `Boy #${nft.token_id}`;
+                this.nftSelect.appendChild(option);
+            });
         } catch (error) {
             console.error('Error loading collection:', error);
-            alert('Error loading collection. Please check the contract address and try again.');
         }
     }
 

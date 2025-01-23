@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFT Voice Chat</title>
+    <title>Petra Boys Voice Chat</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,9 +11,9 @@
         <div class="collection-info">
             <div class="collection-header">
                 <select id="chainSelect" class="chain-select">
-                    <option value="">Select Chain</option>
+                    <option value="mantle" selected>Mantle</option>
                 </select>
-                <input type="text" id="contractInput" class="contract-input" placeholder="Enter NFT Contract Address">
+                <input type="text" id="contractInput" class="contract-input" value="0x8ca63b0424c7e609051784f5673a76e78a17abed" readonly>
                 <button id="loadCollection" class="load-btn">Load Collection</button>
             </div>
             <div id="collectionMetadata" class="collection-metadata">

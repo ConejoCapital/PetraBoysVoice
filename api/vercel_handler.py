@@ -6,15 +6,22 @@ import requests
 from urllib.parse import parse_qs, urlparse
 
 SIMPLEHASH_API_KEY = os.getenv('SIMPLEHASH_API_KEY')
-SUPPORTED_CHAINS = [
-    "ethereum", "polygon", "solana", "bitcoin", "arbitrum", "optimism", 
-    "base", "avalanche", "bsc", "zora", "blast", "mantle"
-]
+ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY')
+
+# Default collection settings
+DEFAULT_CHAIN = "mantle"
+DEFAULT_CONTRACT = "0x8ca63b0424c7e609051784f5673a76e78a17abed"
+DEFAULT_COLLECTION_NAME = "Petra Boys"
+
+SUPPORTED_CHAINS = ["mantle"]  # Simplified to just support Mantle for now
 
 # Initialize Claude client
 claude = anthropic.Client(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
-def fetch_collection_metadata(chain, contract_address):
+def fetch_collection_metadata(chain=DEFAULT_CHAIN, contract_address=DEFAULT_CONTRACT):
+    if not SIMPLEHASH_API_KEY:
+        raise Exception("SIMPLEHASH_API_KEY not configured")
+        
     url = f"https://api.simplehash.com/api/v0/nfts/{chain}/{contract_address}"
     headers = {
         "accept": "application/json",
@@ -27,31 +34,31 @@ def fetch_collection_metadata(chain, contract_address):
 
     try:
         response = requests.get(url, headers=headers, params=params)
-        if response.ok:
-            data = response.json()
+        response.raise_for_status()  # Raise exception for bad status codes
+        
+        data = response.json()
+        if not data.get('nfts'):
+            raise Exception("No NFTs found in collection")
             
-            if data.get('nfts') and len(data['nfts']) > 0:
-                collection_data = data['nfts'][0].get('collection', {})
-                return {
-                    'collection_id': collection_data.get('collection_id'),
-                    'name': collection_data.get('name'),
-                    'description': collection_data.get('description'),
-                    'image_url': collection_data.get('image_url'),
-                    'banner_image_url': collection_data.get('banner_image_url'),
-                    'category': collection_data.get('category'),
-                    'external_url': collection_data.get('external_url'),
-                    'twitter_username': collection_data.get('twitter_username'),
-                    'discord_url': collection_data.get('discord_url'),
-                    'floor_prices': collection_data.get('floor_prices', []),
-                    'distinct_owner_count': collection_data.get('distinct_owner_count'),
-                    'distinct_nft_count': collection_data.get('distinct_nft_count'),
-                    'total_quantity': collection_data.get('total_quantity'),
-                    'nfts': data['nfts']
-                }
-        return None
-    except Exception as e:
+        collection_data = data['nfts'][0].get('collection', {})
+        return {
+            'collection_id': collection_data.get('collection_id'),
+            'name': collection_data.get('name', DEFAULT_COLLECTION_NAME),
+            'description': collection_data.get('description'),
+            'image_url': collection_data.get('image_url'),
+            'banner_image_url': collection_data.get('banner_image_url'),
+            'external_url': collection_data.get('external_url'),
+            'twitter_username': collection_data.get('twitter_username'),
+            'discord_url': collection_data.get('discord_url'),
+            'floor_prices': collection_data.get('floor_prices', []),
+            'distinct_owner_count': collection_data.get('distinct_owner_count'),
+            'distinct_nft_count': collection_data.get('distinct_nft_count'),
+            'total_quantity': collection_data.get('total_quantity'),
+            'nfts': data['nfts']
+        }
+    except requests.exceptions.RequestException as e:
         print(f"Error fetching collection metadata: {e}")
-        return None
+        raise Exception(f"Failed to fetch collection data: {str(e)}")
 
 def fetch_nft_metadata(chain, contract_address, token_id):
     url = f"https://api.simplehash.com/api/v0/nfts/{chain}/{contract_address}/{token_id}"
